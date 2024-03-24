@@ -1,8 +1,11 @@
+#!/usr/bin/env python
+
 import logging
 import time
 import json
+import argparse
+
 from pprint import pprint
-from functools import partial
 import boto3
 from botocore.exceptions import ClientError
 
@@ -142,8 +145,18 @@ def generate(
 
 
 def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--output-conf", type=int, default=0)
+    parser.add_argument("--output-completions", type=int, default=0)
+    parser.add_argument("--output-runs", type=int, default=0)
+    parser.add_argument("--output-report", type=int, default=0)
+
+    args, _ = parser.parse_known_args()
+
     conf = Config.from_yaml_file("config.yaml")
-    pprint(conf)
+    if args.output_conf:
+        pprint(conf)
 
     runs = []
 
@@ -165,9 +178,10 @@ def main():
                             "region": region,
                         }
                     )
-    pprint(runs)
+    if args.output_runs:
+        pprint(runs)
 
-    print("execute:\n\n")
+    print("\nExecution starting.\n\n")
 
     report = ""
 
@@ -186,10 +200,12 @@ def main():
         report += s + "\n"
         print(s)
 
-        print(results["completion"])
+        if args.output_completions:
+            print(results["completion"])
 
-    print("\nReport:\n")
-    print(report)
+    if args.output_report:
+        print("\nReport:\n")
+        print(report)
 
 
 if __name__ == "__main__":
