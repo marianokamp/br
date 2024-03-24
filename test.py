@@ -141,51 +141,56 @@ def generate(
         raise err
 
 
-conf = Config.from_yaml_file("config.yaml")
-pprint(conf)
+def main():
+    conf = Config.from_yaml_file("config.yaml")
+    pprint(conf)
 
-runs = []
+    runs = []
 
-for scenario in conf.scenarios:
-    if scenario.enabled:
-        prompt_text = conf.prompts[scenario.prompt_id].text
-        max_tokens = conf.prompts[scenario.prompt_id].max_tokens
+    for scenario in conf.scenarios:
+        if scenario.enabled:
+            prompt_text = conf.prompts[scenario.prompt_id].text
+            max_tokens = conf.prompts[scenario.prompt_id].max_tokens
 
-        for model in scenario.models:
-            model_id = conf.models[model].id
+            for model in scenario.models:
+                model_id = conf.models[model].id
 
-            for region in conf.models[model].regions:
-                runs.append(
-                    {
-                        "scenario": scenario.nick,
-                        "prompt": prompt_text,
-                        "max_tokens": max_tokens,
-                        "model_id": model_id,
-                        "region": region,
-                    }
-                )
-pprint(runs)
+                for region in conf.models[model].regions:
+                    runs.append(
+                        {
+                            "scenario": scenario.nick,
+                            "prompt": prompt_text,
+                            "max_tokens": max_tokens,
+                            "model_id": model_id,
+                            "region": region,
+                        }
+                    )
+    pprint(runs)
 
-print("execute:\n\n")
+    print("execute:\n\n")
 
-report = ""
+    report = ""
 
-for run in runs:
-    results = generate(**run)
-    metrics = results["metrics"]
-    s = f'{run["scenario"]:>30s}'
-    s += f'{results["actual_model"]:>30s} '
-    s += f' {run["region"]:>15s} '
-    s += f'{metrics["firstByteLatency"]/1000.:7.3f}s, '
-    s += f'{metrics["invocationLatency"]/1000.:8.3f}s, '
-    s += f'{results["measured_time_to_first_token_s"]:7.3f}s, '
-    s += f'{results["measured_latency_s"]:7.3f}s, '
-    s += f'{metrics["inputTokenCount"]:5d}, {metrics["outputTokenCount"]:5d} '
+    for run in runs:
+        results = generate(**run)
+        metrics = results["metrics"]
+        s = f'{run["scenario"]:>30s}'
+        s += f'{results["actual_model"]:>30s} '
+        s += f' {run["region"]:>15s} '
+        s += f'{metrics["firstByteLatency"]/1000.:7.3f}s, '
+        s += f'{metrics["invocationLatency"]/1000.:8.3f}s, '
+        s += f'{results["measured_time_to_first_token_s"]:7.3f}s, '
+        s += f'{results["measured_latency_s"]:7.3f}s, '
+        s += f'{metrics["inputTokenCount"]:5d}, {metrics["outputTokenCount"]:5d} '
 
-    report += s + "\n"
-    print(s)
+        report += s + "\n"
+        print(s)
 
-    print(results["completion"])
+        print(results["completion"])
 
-print("\nReport:\n")
-print(report)
+    print("\nReport:\n")
+    print(report)
+
+
+if __name__ == "__main__":
+    main()
