@@ -50,7 +50,22 @@ scenarios:
       #- claude_2
       #- claude_sonnet
 
+  amendments:
+    nick: Short prompt, long completion
+    enabled: True 
+    prompt_id: amendments 
+    models:
+      - claude_haiku
+      #- claude_2
+      #- claude_sonnet
+
 prompts:
+  amendments:
+    nick: Recite the 10 amemedments
+    max_tokens: 500
+    text: >
+      Recite all amendments of the bill of rights verbatim.
+
   lua_hello_world:  
     nick: Lua Hello World
     max_tokens: 150
