@@ -192,7 +192,7 @@ def main():
     if args.output_runs:
         pprint(runs)
 
-    print("\nExecution starting.\n\n")
+    print("\nExecution starting.\n")
 
     report = ""
 
@@ -217,6 +217,9 @@ def main():
     if args.output_report:
         print("\nReport:\n")
         print(report)
+
+
+print(f"{__name__=}")
 
 
 if __name__ == "__main__":
