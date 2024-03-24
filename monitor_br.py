@@ -181,6 +181,8 @@ def main():
     parser.add_argument("--output-completions", type=int, default=0)
     parser.add_argument("--output-runs", type=int, default=0)
     parser.add_argument("--output-report", type=int, default=0)
+    parser.add_argument("--run-local-reports", type=int, default=0)
+    parser.add_argument("--run-reports", type=int, default=0)
 
     args, _ = parser.parse_known_args()
 
@@ -192,34 +194,36 @@ def main():
     if args.output_runs:
         pprint(runs)
 
-    print("\nExecution starting.\n")
+    if args.run_local_reports:
+        print("\nExecution starting.\n")
 
-    report = ""
+        report = ""
 
-    for run in runs:
-        results = generate(**run)
-        metrics = results["metrics"]
-        s = f'{run["scenario"]:>30s}'
-        s += f'{results["actual_model"]:>30s} '
-        s += f' {run["region"]:>15s} '
-        s += f'{metrics["firstByteLatency"]/1000.:7.3f}s, '
-        s += f'{metrics["invocationLatency"]/1000.:8.3f}s, '
-        s += f'{results["client_measured_time_to_first_token_s"]:7.3f}s, '
-        s += f'{results["client_measured_latency_s"]:7.3f}s, '
-        s += f'{metrics["inputTokenCount"]:5d}, {metrics["outputTokenCount"]:5d} '
+        for run in runs:
+            results = generate(**run)
+            metrics = results["metrics"]
+            s = f'{run["scenario"]:>30s}'
+            s += f'{results["actual_model"]:>30s} '
+            s += f' {run["region"]:>15s} '
+            s += f'{metrics["firstByteLatency"]/1000.:7.3f}s, '
+            s += f'{metrics["invocationLatency"]/1000.:8.3f}s, '
+            s += f'{results["client_measured_time_to_first_token_s"]:7.3f}s, '
+            s += f'{results["client_measured_latency_s"]:7.3f}s, '
+            s += f'{metrics["inputTokenCount"]:5d}, {metrics["outputTokenCount"]:5d} '
 
-        report += s + "\n"
-        print(s)
+            report += s + "\n"
+            print(s)
 
-        if args.output_completions:
-            print(results["completion"])
+            if args.output_completions:
+                print(results["completion"])
 
-    if args.output_report:
-        print("\nReport:\n")
-        print(report)
+        if args.output_report:
+            print("\nReport:\n")
+            print(report)
 
-
-print(f"{__name__=}")
+    if args.run_reports:
+        for run in runs:
+            run_and_report(conf, run)
 
 
 if __name__ == "__main__":
