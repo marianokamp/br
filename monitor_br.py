@@ -4,7 +4,8 @@ import logging
 import time
 import json
 import argparse
-
+import datetime
+import uuid
 from pprint import pprint
 import boto3
 from botocore.exceptions import ClientError
@@ -34,7 +35,12 @@ def generate(
     #    print_fn = partial(print, end="")
 
     bedrock = boto3.client(service_name="bedrock-runtime", region_name=region)
-    emd = dict(region="us-east-1", prompt=prompt, completion="")  # Execution metadata
+    emd = dict(
+        region=region,
+        prompt=prompt,
+        completion="",
+        executed_at=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )  # Execution metadata
 
     body = json.dumps(
         {
@@ -144,6 +150,25 @@ def generate(
     except ClientError as err:
         print(err)
         raise err
+
+
+def run_and_report(conf, run):
+    result = generate(**run)
+
+    d = {**result, **run}
+    s = json.dumps(d)
+
+    s3 = boto3.client("s3")
+    s3.put_object(
+        Bucket=conf.locations.run_report_bucket,
+        Key=conf.locations.run_report_prefix
+        + "/"
+        + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        + "_"
+        + str(uuid.uuid4())[:8]
+        + ".json",
+        Body=s.encode("utf-8"),
+    )
 
 
 def create_runs(conf):
