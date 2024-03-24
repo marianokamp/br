@@ -1,3 +1,7 @@
+locations:
+  run_report_bucket: mkamp-aws-dub
+  run_report_prefix: run_reports  
+
 models:
 
   claude_haiku:
@@ -62,9 +66,9 @@ scenarios:
 prompts:
   amendments:
     nick: Recite the 10 amemedments
-    max_tokens: 500
+    max_tokens: 1_500 
     text: >
-      Recite all amendments of the bill of rights verbatim.
+      Recite all amendments of the bill of rights verbatim. Then translate to German. Then translate to French.
 
   lua_hello_world:  
     nick: Lua Hello World
