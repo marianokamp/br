@@ -101,8 +101,10 @@ def generate(
                     """
                     # emd["num_output_tokens"] += 1
                     text = chunk["delta"]["text"]
-                    if "measured_time_to_first_token_s" not in emd:
-                        emd["measured_time_to_first_token_s"] = time.time() - started
+                    if "client_measured_time_to_first_token_s" not in emd:
+                        emd["client_measured_time_to_first_token_s"] = (
+                            time.time() - started
+                        )
 
                     if print_fn:
                         print_fn(text)
@@ -136,7 +138,7 @@ def generate(
                     raise RuntimeError(
                         f"Did not expect message of type: {unknown_message_type}."
                     )
-        emd["measured_latency_s"] = time.time() - started
+        emd["client_measured_latency_s"] = time.time() - started
         return emd
 
     except ClientError as err:
@@ -193,8 +195,8 @@ def main():
         s += f' {run["region"]:>15s} '
         s += f'{metrics["firstByteLatency"]/1000.:7.3f}s, '
         s += f'{metrics["invocationLatency"]/1000.:8.3f}s, '
-        s += f'{results["measured_time_to_first_token_s"]:7.3f}s, '
-        s += f'{results["measured_latency_s"]:7.3f}s, '
+        s += f'{results["client_measured_time_to_first_token_s"]:7.3f}s, '
+        s += f'{results["client_measured_latency_s"]:7.3f}s, '
         s += f'{metrics["inputTokenCount"]:5d}, {metrics["outputTokenCount"]:5d} '
 
         report += s + "\n"
