@@ -63,12 +63,7 @@ prompts:
     max_tokens: 12_000 
     text: >
       Read the document after the triple dash. 
-      Is NVIDIA is a succesful company? Answer `yes` or `no`. 
-      Nothing more, no explanation, no justification. 
-      One single word answer. Absolutely. 
-      Just `yes` or `no`.
-      No exceptions. 
-      `yes` or `no` and format it as xml in an xml element called `result`.
+      Is NVIDIA a succesful company? Answer the preceding question only with a single token, either `0` for no, or `1` for yes. Nothing else, no explanation, no justification,
 
       ---
 
