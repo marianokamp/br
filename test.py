@@ -146,19 +146,10 @@ def generate(
         raise err
 
 
-def main():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--output-conf", type=int, default=0)
-    parser.add_argument("--output-completions", type=int, default=0)
-    parser.add_argument("--output-runs", type=int, default=0)
-    parser.add_argument("--output-report", type=int, default=0)
-
-    args, _ = parser.parse_known_args()
-
-    conf = Config.from_yaml_file("config.yaml")
-    if args.output_conf:
-        pprint(conf)
+def create_runs(conf):
+    """
+    Creates all runs for scenarios that are enabled.
+    """
 
     runs = []
 
@@ -180,6 +171,24 @@ def main():
                             "region": region,
                         }
                     )
+    return runs
+
+
+def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--output-conf", type=int, default=0)
+    parser.add_argument("--output-completions", type=int, default=0)
+    parser.add_argument("--output-runs", type=int, default=0)
+    parser.add_argument("--output-report", type=int, default=0)
+
+    args, _ = parser.parse_known_args()
+
+    conf = Config.from_yaml_file("config.yaml")
+    if args.output_conf:
+        pprint(conf)
+
+    runs = create_runs(conf)
     if args.output_runs:
         pprint(runs)
 
