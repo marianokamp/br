@@ -23,6 +23,27 @@ models:
     regions:
       - us-east-1
 
+  mistral_7b:
+    id: mistral.mistral-7b-instruct-v0:2
+    nick: Mistral 7B
+    regions:
+      - us-east-1
+      - eu-west-3
+
+  mistral_large:
+    id: mistral.mistral-large-2402-v1:0
+    nick: Mistral Large
+    regions: 
+      - us-east-1
+      - eu-west-3
+
+  mistral_mixtral_8x7b:
+    id: mistral.mixtral-8x7b-instruct-v0:1 
+    nick: Mistral Mixtral 8x7B
+    regions: 
+      - us-east-1
+      - eu-west-3
+
 scenarios:
 
   lua_hello_world:
@@ -31,9 +52,11 @@ scenarios:
     prompt_id: lua_hello_world
     models:
       - claude_haiku
-      #- claude_2
-      #- claude_sonnet
-
+      - claude_2
+      - claude_sonnet
+      - mistral_7b
+      - mistral_mixtral_8x7b
+      - mistral_large
 
   nvidia_short:
     nick: Long prompt, short completion
@@ -41,9 +64,8 @@ scenarios:
     prompt_id: nvidia_investment_short
     models:
       - claude_haiku
-      #- claude_2
-      #- claude_sonnet
-
+      - claude_2
+      - claude_sonnet
 
   nvidia:
     nick: Long prompt, long completion
@@ -51,8 +73,8 @@ scenarios:
     prompt_id: nvidia_investment 
     models:
       - claude_haiku
-      #- claude_2
-      #- claude_sonnet
+      - claude_2
+      - claude_sonnet
 
   amendments:
     nick: Short prompt, long completion
@@ -60,8 +82,11 @@ scenarios:
     prompt_id: amendments 
     models:
       - claude_haiku
-      #- claude_2
-      #- claude_sonnet
+      - claude_2
+      - claude_sonnet
+      - mistral_7b
+      - mistral_mixtral_8x7b
+      - mistral_large
 
 prompts:
   amendments:
@@ -397,7 +422,7 @@ prompts:
       Two days later, Nvidia reversed their stance.[200][201] Hardware Unboxed sent out a Twitter message, "I just received an email from Nvidia apologizing for the previous email & they've now walked everything back."[202][195] On December 14, Hardware Unboxed released a video explaining the controversy from their viewpoint.[203] Via Twitter, they also shared a second apology sent by Nvidia's Del Rizzo that said "to withhold samples because I didn't agree with your commentary is simply inexcusable and crossed the line."[204][205]
     
       Improper disclosures about cryptomining
-      In 2018, Nvidia's chips became popular for cryptomining, the process of obtaining crypto rewards in exchange for verifying transactions on distributed ledgers, the U.S. Securities and Exchange Commission (SEC) said. However, the company failed to disclose that it was a "significant element" of its revenue growth from sales of chips designed for gaming, the SEC further added in a statement and charging order. Those omissions misled investors and analysts who were interested in understanding the impact of cryptomining on Nvidia's business, the SEC emphasized. Nvidia, which did not admit or deny the findings, has agreed to pay $5.5 million to settle civil charges, according to a statement made by the SEC in May 2022.[206]
+      In 2018, Nvidia's chips became popular for cryptomining, the process of obtaining crypto rewards in exchange for verifying transactions on distributed ledgers, the U.S. Securities and Exchange Commission (SEC) said. However, the company failed to disclose that it was a "significant element" of its revenue growth from sales of chips designed for gaming, the SEC further added in a statement and charging order. Those omissions misled investors and analysts who were interested in understanding the impact of cryptomining on Nvidia's business, the SEC emphasized. Nvidia, which did not admit or deny the findings, has agreed to pay $5.5 million to settle civil charges, according to a statement made by the SEC in May 2022.
   nvidia_investment:
     nick: NVIDIA Investment Advice
     max_tokens: 12_000
