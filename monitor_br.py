@@ -332,11 +332,6 @@ def main():
             print("\nReport:\n")
             print(report)
 
-    # if args.run_reports_:
-    #     for run in runs:
-    #         result = run_and_report(conf, run)
-    #         report_run(run, result)
-
     if args.run_reports:
         while True:
             print(datetime.datetime.now(), end="\t")
