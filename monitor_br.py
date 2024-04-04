@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import logging
+import re
 from re import template
 import time
 import json
@@ -293,6 +294,7 @@ def main():
     parser.add_argument("--run-local-reports", type=int, default=0)
     parser.add_argument("--run-reports", type=int, default=0)
     parser.add_argument("--list-models", type=int, default=0)
+    parser.add_argument("--filter", type=str, default=None)
 
     args, _ = parser.parse_known_args()
 
@@ -304,8 +306,11 @@ def main():
         pprint(conf)
 
     runs = create_runs(conf)
-    #runs = [create_runs(conf)[0]]
-    #runs = [r for r in runs if 'mistral' in r['model_id']] 
+    if args.filter:
+        
+        before= len(runs)
+        runs = [r for r in runs if re.search(args.filter, str(r))]
+        print(f'Using filtering, from {before} to {len(runs)} elements.')
 
     if args.output_runs:
         pprint(runs)
@@ -343,7 +348,7 @@ def main():
                 print("err", err)
                 print(run["scenario"], run["model_id"], run["region"])
 
-            wait_s = np.random.randint(5 * 60, 1 * 60 * 60)
+            wait_s = np.random.randint(5 * 60, 1 * 60  * 60)
             time.sleep(wait_s)
 
 
