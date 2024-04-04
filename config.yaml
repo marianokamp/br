@@ -66,6 +66,9 @@ scenarios:
       - claude_haiku
       - claude_2
       - claude_sonnet
+      - mistral_7b
+      - mistral_mixtral_8x7b
+      - mistral_large
 
   nvidia:
     nick: Long prompt, long completion
@@ -75,6 +78,9 @@ scenarios:
       - claude_haiku
       - claude_2
       - claude_sonnet
+      - mistral_7b
+      - mistral_mixtral_8x7b
+      - mistral_large
 
   amendments:
     nick: Short prompt, long completion
@@ -90,10 +96,11 @@ scenarios:
 
 prompts:
   amendments:
-    nick: Recite the 10 amemedments
-    max_tokens: 1_500 
+    nick: Recite the 10 amendments
+    max_tokens: 500 
     text: >
-      Recite all amendments of the bill of rights verbatim. Then translate to German. Then translate to French.
+      Recite all amendments of the bill of rights verbatim. 
+      Provide your answer in English, German, French and Spanish. 
 
   lua_hello_world:  
     nick: Lua Hello World
@@ -104,7 +111,7 @@ prompts:
 
   nvidia_investment_short:
     nick: NVIDIA Investment Advice, short
-    max_tokens: 12_000 
+    max_tokens: 500 
     text: >
       Read the document after the triple dash. 
       Is NVIDIA a succesful company? Answer the preceding question only with a single token, either `0` for no, or `1` for yes. Nothing else, no explanation, no justification,
@@ -425,7 +432,7 @@ prompts:
       In 2018, Nvidia's chips became popular for cryptomining, the process of obtaining crypto rewards in exchange for verifying transactions on distributed ledgers, the U.S. Securities and Exchange Commission (SEC) said. However, the company failed to disclose that it was a "significant element" of its revenue growth from sales of chips designed for gaming, the SEC further added in a statement and charging order. Those omissions misled investors and analysts who were interested in understanding the impact of cryptomining on Nvidia's business, the SEC emphasized. Nvidia, which did not admit or deny the findings, has agreed to pay $5.5 million to settle civil charges, according to a statement made by the SEC in May 2022.
   nvidia_investment:
     nick: NVIDIA Investment Advice
-    max_tokens: 12_000
+    max_tokens: 500 
     text: >
       You are a world class investment advisor.
 
@@ -436,7 +443,7 @@ prompts:
     
       Think step-by-step first, justify your thinking, 
       then summarize your revised and final answers with respect to 1. to 3.
-
+      Provide your answer in English, German and French. 
       ---
 
       Headquarters at Santa Clara in 2023
