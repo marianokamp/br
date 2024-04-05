@@ -37,8 +37,16 @@ SELECT
     metrics.invocationlatency/1000. as server_invocation_latency_s,
     
     client_measured_latency_s as client_invocation_latency_s,
-    client_measured_time_to_first_token_s as server_first_token_latency_s
+    client_measured_time_to_first_token_s as server_first_token_latency_s,
+
+    prompt, 
+    completion
     
     
 FROM "default"."run_reports"
 
+
+pip install --upgrade --target ./package numpy
+
+
+cd package && zip -r ../deploy.zip . && cd .. && zip deploy.zip *.py *.yaml

@@ -8,10 +8,10 @@ import json
 import argparse
 import datetime
 import uuid
+import random
 from pprint import pprint
 import boto3
-import numpy as np
-from botocore.exceptions import ClientError, EventStreamError  # , EventStreamError
+from botocore.exceptions import ClientError
 
 from config import Config
 
@@ -24,13 +24,13 @@ class ModelProviderAdapter:
     def __init__(self, model_id):
         self.model_id = model_id
 
-    def adapt_prompt(self, prompt):
+    def adapt_prompt(self, prompt) -> str:
         raise RuntimeError("Not implemented")
 
-    def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.):
+    def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.) -> str:
         raise RuntimeError("Not implemented")
 
-    def handle_chunk(self, chunk, emd, print_fn):
+    def handle_chunk(self, chunk, emd, print_fn) -> None:
         raise RuntimeError("Not implemented")
 
     @classmethod 
@@ -335,7 +335,7 @@ def main():
     if args.run_reports:
         while True:
             print(datetime.datetime.now(), end="\t")
-            run = np.random.choice(runs)
+            run = random.choice(runs)
             try:
                 result = run_and_report(conf, run)
                 report_run(run, result)
@@ -343,7 +343,7 @@ def main():
                 print("err", err)
                 print(run["scenario"], run["model_id"], run["region"])
 
-            wait_s = np.random.randint(5 * 60, 1 * 60  * 60)
+            wait_s = random.randint(5 * 60, 1 * 60  * 60)
             time.sleep(wait_s)
 
 
