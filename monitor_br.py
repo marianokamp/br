@@ -39,6 +39,8 @@ class ModelProviderAdapter:
             return AnthropicModelAdapter(model_id)
         elif "mistral" in model_id:
             return MistralModelAdapter(model_id)
+        elif "llama" in model_id:
+            return LlamaModelAdapter(model_id)
         raise RuntimeError(f'No model provider adapter for {model_id}.')
 
 class AnthropicModelAdapter(ModelProviderAdapter):
@@ -124,6 +126,42 @@ class AnthropicModelAdapter(ModelProviderAdapter):
                     f"Did not expect message of type: {unknown_message_type}."
                 )
     
+class LlamaModelAdapter(ModelProviderAdapter):
+    def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.):
+
+        body = json.dumps( {
+            "prompt": prompt, 
+            "max_gen_len": max_tokens,
+            "temperature": temperature,
+            "top_p": top_p 
+        })
+        return body
+
+    def adapt_prompt(self, prompt):
+        adapted_prompt = (
+            f'<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n'
+            f'{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>'
+        )
+        return adapted_prompt
+
+    def handle_chunk(self, chunk, emd, print_fn):
+        if "actual_model" not in emd:
+            emd['actual_model'] = self.model_id
+        for output in chunk['generation']:
+            text = output
+            if text:
+                if "client_measured_time_to_first_token_s" not in emd:
+                    emd["client_measured_time_to_first_token_s"] = (
+                        time.time() - emd['started']
+                    )
+                    
+                emd['completion'] += text
+                if print_fn:
+                    print_fn(text)
+
+        if "amazon-bedrock-invocationMetrics" in chunk:
+            emd['metrics'] = chunk['amazon-bedrock-invocationMetrics']
+
 class MistralModelAdapter(ModelProviderAdapter):
     def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.):
 
@@ -210,7 +248,6 @@ def generate(
                 print("chunk::")
                 pprint(chunk)
 
-                print("type::", chunk["type"])
             model_adapter.handle_chunk(chunk, emd, print_fn)
 
         emd["client_measured_latency_s"] = time.time() - emd['started']
@@ -295,6 +332,7 @@ def main():
     parser.add_argument("--run-reports", type=int, default=0)
     parser.add_argument("--list-models", type=int, default=0)
     parser.add_argument("--filter", type=str, default=None)
+    parser.add_argument("--verbose", type=int, default=0)
 
     args, _ = parser.parse_known_args()
 
@@ -321,7 +359,7 @@ def main():
         report = ""
 
         for run in runs:
-            results = generate(**run)
+            results = generate(**run, verbose=args.verbose)
             s = report_run(run, results)
             report += s + "\n"
 
@@ -343,7 +381,7 @@ def main():
                 print("err", err)
                 print(run["scenario"], run["model_id"], run["region"])
 
-            wait_s = random.randint(5 * 60, 1 * 60  * 60)
+            wait_s = random.randint(5 * 60, 20 * 60)
             time.sleep(wait_s)
 
 

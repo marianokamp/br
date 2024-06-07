@@ -4,6 +4,20 @@ locations:
 
 models:
 
+  llama3-8b-instruct:
+    id: meta.llama3-8b-instruct-v1:0
+    nick: llama3-8b-instruct
+    regions:
+      - us-west-2
+      - us-east-1
+
+  llama3-70b-instruct:
+    id: meta.llama3-70b-instruct-v1:0
+    nick: llama3-70b-instruct
+    regions:
+      - us-west-2
+      - us-east-1
+
   claude_opus:
     id: anthropic.claude-3-opus-20240229-v1:0
     nick: opus
@@ -16,6 +30,7 @@ models:
     regions:
       - us-east-1
       - eu-west-3
+      - eu-central-1
 
   claude_2:
     id: anthropic.claude-v2:1  
@@ -30,6 +45,7 @@ models:
     regions:
       - us-east-1
       - eu-west-3
+      - eu-central-1
 
   mistral_7b:
     id: mistral.mistral-7b-instruct-v0:2
@@ -65,6 +81,8 @@ scenarios:
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large
+      - llama3-70b-instruct
+      - llama3-8b-instruct
 
   nvidia_short:
     nick: Long prompt, short completion
@@ -77,6 +95,8 @@ scenarios:
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large
+      #- llama3-70b-instruct
+      #- llama3-8b-instruct
 
   nvidia:
     nick: Long prompt, long completion
@@ -89,6 +109,8 @@ scenarios:
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large
+      #  - llama3-70b-instruct
+      #- llama3-8b-instruct
 
   amendments:
     nick: Short prompt, long completion
@@ -101,6 +123,8 @@ scenarios:
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large
+      - llama3-70b-instruct
+      - llama3-8b-instruct
 
 prompts:
   amendments:
