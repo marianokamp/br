@@ -41,10 +41,35 @@ models:
     
   claude_sonnet:
     id: anthropic.claude-3-sonnet-20240229-v1:0
-    nick: Claude Sonnet 
+    nick: Claude Sonnet 3.0
     regions:
       - us-east-1
       - eu-west-3
+      - eu-central-1
+      
+  claude_sonnet_3_5_eu:
+    id: eu.anthropic.claude-3-5-sonnet-20240620-v1:0
+    #id: anthropic.claude-3-5-sonnet-20240620-v1:0
+    nick: Claude Sonnet 3.5 EU
+    regions:
+      #  - us-east-1
+      - eu-west-3
+      - eu-central-1
+  claude_sonnet_3_5_us:
+    id: us.anthropic.claude-3-5-sonnet-20240620-v1:0
+    #id: anthropic.claude-3-5-sonnet-20240620-v1:0
+    nick: Claude Sonnet 3.5 US
+    regions:
+      - us-east-1
+      # - eu-west-3
+      #- eu-central-1
+  claude_sonnet_3_5:
+    id: anthropic.claude-3-5-sonnet-20240620-v1:0
+    #id: anthropic.claude-3-5-sonnet-20240620-v1:0
+    nick: Claude Sonnet 3.5
+    regions:
+      - us-east-1
+      #- eu-west-3
       - eu-central-1
 
   mistral_7b:
@@ -78,6 +103,9 @@ scenarios:
       - claude_haiku
       - claude_2
       - claude_sonnet
+      - claude_sonnet_3_5
+      - claude_sonnet_3_5_eu
+      - claude_sonnet_3_5_us
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large
@@ -92,6 +120,9 @@ scenarios:
       - claude_haiku
       - claude_2
       - claude_sonnet
+      - claude_sonnet_3_5
+      - claude_sonnet_3_5_eu
+      - claude_sonnet_3_5_us
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large
@@ -106,6 +137,9 @@ scenarios:
       - claude_haiku
       - claude_2
       - claude_sonnet
+      - claude_sonnet_3_5
+      - claude_sonnet_3_5_eu
+      - claude_sonnet_3_5_us
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large
@@ -120,6 +154,10 @@ scenarios:
       - claude_haiku
       - claude_2
       - claude_sonnet
+      - claude_sonnet_3_5
+      - claude_sonnet_3_5_eu
+      - claude_sonnet_3_5_us
+      #- claude_sonnet_3_5
       - mistral_7b
       - mistral_mixtral_8x7b
       - mistral_large

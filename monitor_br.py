@@ -27,13 +27,13 @@ class ModelProviderAdapter:
     def adapt_prompt(self, prompt) -> str:
         raise RuntimeError("Not implemented")
 
-    def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.) -> str:
+    def adapt_body(self, prompt, max_tokens, temperature=0.0, top_p=1.0) -> str:
         raise RuntimeError("Not implemented")
 
     def handle_chunk(self, chunk, emd, print_fn) -> None:
         raise RuntimeError("Not implemented")
 
-    @classmethod 
+    @classmethod
     def instantiate(cls, model_id):
         if "anthropic" in model_id:
             return AnthropicModelAdapter(model_id)
@@ -41,21 +41,24 @@ class ModelProviderAdapter:
             return MistralModelAdapter(model_id)
         elif "llama" in model_id:
             return LlamaModelAdapter(model_id)
-        raise RuntimeError(f'No model provider adapter for {model_id}.')
+        raise RuntimeError(f"No model provider adapter for {model_id}.")
+
 
 class AnthropicModelAdapter(ModelProviderAdapter):
-    def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.):
-        return json.dumps( {
-            "anthropic_version": "bedrock-2023-05-31",
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-            "top_p": top_p 
-        })
-         
+    def adapt_body(self, prompt, max_tokens, temperature=0.0, top_p=1.0):
+        return json.dumps(
+            {
+                "anthropic_version": "bedrock-2023-05-31",
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "top_p": top_p,
+            }
+        )
+
     def adapt_prompt(self, prompt):
         return prompt
-    
+
     def handle_chunk(self, chunk, emd, print_fn):
         match chunk["type"]:
             case "message_start":
@@ -90,7 +93,7 @@ class AnthropicModelAdapter(ModelProviderAdapter):
                 text = chunk["delta"]["text"]
                 if "client_measured_time_to_first_token_s" not in emd:
                     emd["client_measured_time_to_first_token_s"] = (
-                        time.time() - emd['started']
+                        time.time() - emd["started"]
                     )
 
                 if print_fn:
@@ -125,75 +128,80 @@ class AnthropicModelAdapter(ModelProviderAdapter):
                 raise RuntimeError(
                     f"Did not expect message of type: {unknown_message_type}."
                 )
-    
-class LlamaModelAdapter(ModelProviderAdapter):
-    def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.):
 
-        body = json.dumps( {
-            "prompt": prompt, 
-            "max_gen_len": max_tokens,
-            "temperature": temperature,
-            "top_p": top_p 
-        })
+
+class LlamaModelAdapter(ModelProviderAdapter):
+    def adapt_body(self, prompt, max_tokens, temperature=0.0, top_p=1.0):
+        body = json.dumps(
+            {
+                "prompt": prompt,
+                "max_gen_len": max_tokens,
+                "temperature": temperature,
+                "top_p": top_p,
+            }
+        )
         return body
 
     def adapt_prompt(self, prompt):
         adapted_prompt = (
-            f'<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n'
-            f'{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>'
+            f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n"
+            f"{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
         )
         return adapted_prompt
 
     def handle_chunk(self, chunk, emd, print_fn):
         if "actual_model" not in emd:
-            emd['actual_model'] = self.model_id
-        for output in chunk['generation']:
+            emd["actual_model"] = self.model_id
+        for output in chunk["generation"]:
             text = output
             if text:
                 if "client_measured_time_to_first_token_s" not in emd:
                     emd["client_measured_time_to_first_token_s"] = (
-                        time.time() - emd['started']
+                        time.time() - emd["started"]
                     )
-                    
-                emd['completion'] += text
+
+                emd["completion"] += text
                 if print_fn:
                     print_fn(text)
 
         if "amazon-bedrock-invocationMetrics" in chunk:
-            emd['metrics'] = chunk['amazon-bedrock-invocationMetrics']
+            emd["metrics"] = chunk["amazon-bedrock-invocationMetrics"]
+
 
 class MistralModelAdapter(ModelProviderAdapter):
-    def adapt_body(self, prompt, max_tokens, temperature=0., top_p=1.):
-
-        body = json.dumps( {
-            "prompt": prompt, 
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-            "top_p": top_p 
-        })
+    def adapt_body(self, prompt, max_tokens, temperature=0.0, top_p=1.0):
+        body = json.dumps(
+            {
+                "prompt": prompt,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "top_p": top_p,
+            }
+        )
         return body
 
     def adapt_prompt(self, prompt):
-        return f'<s>[INST]{prompt}[/INST]'
-        # FIXME: No trailing </s>. That would be weird. 
+        return f"<s>[INST]{prompt}[/INST]"
+        # FIXME: No trailing </s>. That would be weird.
 
     def handle_chunk(self, chunk, emd, print_fn):
         if "actual_model" not in emd:
-            emd['actual_model'] = self.model_id
-        for output in chunk['outputs']:
-            text = output['text']
+            emd["actual_model"] = self.model_id
+        for output in chunk["outputs"]:
+            text = output["text"]
             if text:
                 if "client_measured_time_to_first_token_s" not in emd:
                     emd["client_measured_time_to_first_token_s"] = (
-                        time.time() - emd['started']
+                        time.time() - emd["started"]
                     )
-                    
-                emd['completion'] += text
+
+                emd["completion"] += text
                 if print_fn:
                     print_fn(text)
 
         if "amazon-bedrock-invocationMetrics" in chunk:
-            emd['metrics'] = chunk['amazon-bedrock-invocationMetrics']
+            emd["metrics"] = chunk["amazon-bedrock-invocationMetrics"]
+
 
 def list_models():
     response = bedrock_admin.list_foundation_models()
@@ -205,10 +213,10 @@ def list_models():
     pprint(response)
     print("modelsIds:\n", "\n\t".join(model_ids))
 
+
 def generate(
     prompt, model_id, max_tokens, region, print_fn=None, verbose=False, **kwargs
 ):
-
     model_adapter = ModelProviderAdapter.instantiate(model_id)
     bedrock = boto3.client(service_name="bedrock-runtime", region_name=region)
 
@@ -216,14 +224,17 @@ def generate(
         region=region,
         prompt=prompt,
         completion="",
+        model_id=model_id,
         executed_at=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     )  # Execution metadata
 
-    adapted_prompt = model_adapter.adapt_prompt(prompt) 
+    adapted_prompt = model_adapter.adapt_prompt(prompt)
 
     # FIXME: Merge with adapt_prompt?
-    body = model_adapter.adapt_body(adapted_prompt, max_tokens, temperature=0., top_p=1.)
-    emd['started']= time.time()
+    body = model_adapter.adapt_body(
+        adapted_prompt, max_tokens, temperature=0.0, top_p=1.0
+    )
+    emd["started"] = time.time()
     try:
         response = bedrock.invoke_model_with_response_stream(
             body=body,
@@ -250,11 +261,11 @@ def generate(
 
             model_adapter.handle_chunk(chunk, emd, print_fn)
 
-        emd["client_measured_latency_s"] = time.time() - emd['started']
+        emd["client_measured_latency_s"] = time.time() - emd["started"]
         return emd
 
     except ClientError as err:
-        print(f'Error when accessing {model_id} in {region}: {err}')
+        print(f"Error when accessing {model_id} in {region}: {err}")
         raise err
 
 
@@ -309,6 +320,7 @@ def create_runs(conf):
 def report_run(run, results):
     metrics = results["metrics"]
     s = f'{run["scenario"]:>30s}'
+    s += f' {results["model_id"]:>40s} '
     s += f'{results["actual_model"]:>35s} '
     s += f' {run["region"]:>15s} '
     s += f'{metrics["firstByteLatency"]/1000.:7.3f}s, '
@@ -345,10 +357,9 @@ def main():
 
     runs = create_runs(conf)
     if args.filter:
-        
-        before= len(runs)
+        before = len(runs)
         runs = [r for r in runs if re.search(args.filter, str(r))]
-        print(f'Using filtering, from {before} to {len(runs)} elements.')
+        print(f"Using filtering, from {before} to {len(runs)} elements.")
 
     if args.output_runs:
         pprint(runs)
@@ -357,6 +368,11 @@ def main():
         print("\nExecution starting.\n")
 
         report = ""
+        print(
+            "Scenario, req model id, actual model id, region, \n"
+            "reported first byte latency, reported invocation latency, client measured time to first token, client measured latency,\n"
+            "input token count, output token count"
+        )
 
         for run in runs:
             results = generate(**run, verbose=args.verbose)
